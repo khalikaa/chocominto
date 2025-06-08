@@ -12,13 +12,14 @@ android {
 
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
 
     val localProperties = Properties().apply {
         load(FileInputStream(rootProject.file("local.properties")))
     }
 
-    val apiKey = localProperties.getProperty("api_key") ?: ""
+    val apiKey = localProperties.getProperty("API_KEY") ?: ""
 
 
     defaultConfig {
