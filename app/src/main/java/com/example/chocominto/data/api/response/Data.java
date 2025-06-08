@@ -1,8 +1,12 @@
 package com.example.chocominto.data.api.response;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.List;
 
 public class Data{
+
+	@SerializedName("parts_of_speech")
 	private List<String> partsOfSpeech;
 	private int level;
 	private List<ContextSentencesItem> contextSentences;
@@ -10,12 +14,22 @@ public class Data{
 	private List<MeaningsItem> meanings;
 	private String characters;
 	private List<ReadingsItem> readings;
+
+	@SerializedName("pronunciation_audios")
 	private List<PronunciationAudiosItem> pronunciationAudios;
+
+	@SerializedName("meaning_mnemonic")
 	private String meaningMnemonic;
+
 	private Object hiddenAt;
+
+	@SerializedName("reading_mnemonic")
 	private String readingMnemonic;
+
 	private int spacedRepetitionSystemId;
 	private int lessonPosition;
+
+	@SerializedName("auxiliary_meanings")
 	private List<AuxiliaryMeaningsItem> auxiliaryMeanings;
 	private List<Integer> componentSubjectIds;
 	private String slug;
