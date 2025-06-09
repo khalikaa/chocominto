@@ -1,5 +1,31 @@
 <resources>
     <string name="app_name">chocominto</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!-- Welcome and Progress -->
+    <string name="welcome_back">Welcome back!</string>
+    <string name="daily_progress">Daily Progress</string>
+    <string name="progress_count">5/10</string>
+    <string name="words_learned">15 words learned</string>
+    <string name="current_streak">3-day streak! 🔥</string>
+
+    <!-- Level Section -->
+    <string name="choose_level">Choose difficulty level to start learning new words</string>
+
+    <!-- Levels -->
+    <string name="level_pleasant">快 Pleasant</string>
+    <string name="level_painful">苦 Painful</string>
+    <string name="level_death">死 Death</string>
+    <string name="level_hell">地獄 Hell</string>
+    <string name="level_paradise">天国 Paradise</string>
+    <string name="level_reality">現実 Reality</string>
+
+    <!-- Level Ranges -->
+    <string name="levels_01_10">Levels 01-10</string>
+    <string name="levels_11_20">Levels 11-20</string>
+    <string name="levels_21_30">Levels 21-30</string>
+    <string name="levels_31_40">Levels 31-40</string>
+    <string name="levels_41_50">Levels 41-50</string>
+    <string name="levels_51_60">Levels 51-60</string>
+
+    <string name="level_format">Level %d</string>
 </resources>

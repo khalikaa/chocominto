@@ -9,8 +9,12 @@ public class Data{
 	@SerializedName("parts_of_speech")
 	private List<String> partsOfSpeech;
 	private int level;
+
+	@SerializedName("context_sentences")
 	private List<ContextSentencesItem> contextSentences;
 	private String createdAt;
+
+
 	private List<MeaningsItem> meanings;
 	private String characters;
 	private List<ReadingsItem> readings;

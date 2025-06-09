@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/learnFragment">
+
+    <fragment
+        android:id="@+id/learnFragment"
+        android:name="com.example.chocominto.ui.fragments.LearnFragment"
+        android:label="Learn"
+        tools:layout="@layout/fragment_learn">
+
+    </fragment>
+
+<!--    taro di dalam fragment learn-->
+<!--    <action-->
+<!--        android:id="@+id/action_learn_to_level_selection"-->
+<!--        app:destination="@id/levelSelectionFragment" />-->
+<!--    <fragment-->
+<!--        android:id="@+id/levelSelectionFragment"-->
+<!--        android:name="com.example.chocominto.ui.fragments.LevelSelectionFragment"-->
+<!--        android:label="Level Selection"-->
+<!--        tools:layout="@layout/fragment_level_selection" />-->
+
+    <fragment
+        android:id="@+id/reviewFragment"
+        android:name="com.example.chocominto.ui.fragments.ReviewFragment"
+        android:label="Review"
+        tools:layout="@layout/fragment_review" />
+
+    <fragment
+        android:id="@+id/vocabListFragment"
+        android:name="com.example.chocominto.ui.fragments.VocabListFragment"
+        android:label="Vocabulary"
+        tools:layout="@layout/fragment_vocab_list" />
+</navigation>

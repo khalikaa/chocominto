@@ -58,6 +58,20 @@ public class Vocab {
         this.pronunciationAudios = pronunciationAudios;
     }
 
+    public Vocab(int id, String character, String meaning, String reading,
+                 String partOfSpeech, int level) {
+        this.id = id;
+        this.character = character;
+        this.meaning = meaning;
+        this.reading = reading;
+        this.partOfSpeech = partOfSpeech;
+        this.level = level;
+        this.meaningMnemonic = "";
+        this.readingMnemonic = "";
+        this.contextSentences = List.of();
+        this.pronunciationAudios = List.of();
+    }
+
     public int getId() { return id; }
     public String getCharacter() { return character; }
     public String getMeaning() { return meaning; }
