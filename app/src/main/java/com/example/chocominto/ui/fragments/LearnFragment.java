@@ -10,18 +10,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.example.chocominto.R;
+import com.example.chocominto.data.manager.LearnManager;
 import com.example.chocominto.databinding.FragmentLearnBinding;
 import com.example.chocominto.ui.activities.VocabDetailActivity;
 
 public class LearnFragment extends Fragment {
     private FragmentLearnBinding binding;
-
-    // Mock data
-    private int wordsLearned = 15;
-    private int streak = 3;
-    private int dailyGoal = 10;
-    private int progress = 5;
+    private LearnManager learnManager;
 
     @Nullable
     @Override
@@ -34,42 +29,76 @@ public class LearnFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Set up progress section
-        setupProgressSection();
+        learnManager = LearnManager.getInstance(requireContext());
 
-        // Set up level click listeners
+        setupProgressData();
+
         setupLevelClickListeners();
     }
 
-    private void setupProgressSection() {
-        // Update progress bar
-        binding.progressBar.setMax(dailyGoal);
-        binding.progressBar.setProgress(progress);
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateProgressBar();
+    }
 
-        // Update statistics text
-        binding.textWordsLearned.setText(getString(R.string.words_learned, wordsLearned));
-        binding.textCurrentStreak.setText(getString(R.string.current_streak, streak));
-        binding.textProgressCounter.setText(progress + "/" + dailyGoal);
+    private void setupProgressData() {
+        int goal = 10; // Default goal
+        int selectedCount = learnManager.getSelectedWordsCount();
+
+        binding.progressBar.setMax(goal);
+        binding.progressBar.setProgress(selectedCount);
+
+        binding.textProgressCounter.setText(selectedCount + "/" + goal);
+
+        binding.textWordsLearned.setText(selectedCount + " words selected for learning");
+
+        // Streak
+        int streak = 3; // Mock streak
+        binding.textCurrentStreak.setText(streak + "-day streak! 🔥");
+    }
+
+    private void updateProgressBar() {
+        int goal = 10; // Default goal
+        int selectedCount = learnManager.getSelectedWordsCount();
+
+        binding.progressBar.setProgress(selectedCount);
+        binding.textProgressCounter.setText(selectedCount + "/" + goal);
+        binding.textWordsLearned.setText(selectedCount + " words selected for learning");
     }
 
     private void setupLevelClickListeners() {
-        binding.levelOne.setOnClickListener(v -> navigateToWordDetail(1, 10));
-        binding.levelTwo.setOnClickListener(v -> navigateToWordDetail(11, 20));
-        binding.levelThree.setOnClickListener(v -> navigateToWordDetail(21, 30));
-        binding.levelFour.setOnClickListener(v -> navigateToWordDetail(31, 40));
-        binding.levelFive.setOnClickListener(v -> navigateToWordDetail(41, 50));
-        binding.levelSix.setOnClickListener(v -> navigateToWordDetail(51, 60));
+        binding.levelOne.setOnClickListener(v -> {
+            openVocabDetailWithLevel(1, 10);
+        });
+
+        binding.levelTwo.setOnClickListener(v -> {
+            openVocabDetailWithLevel(11, 20);
+        });
+
+        binding.levelThree.setOnClickListener(v -> {
+            openVocabDetailWithLevel(21, 30);
+        });
+
+        binding.levelFour.setOnClickListener(v -> {
+            openVocabDetailWithLevel(31, 40);
+        });
+
+        binding.levelFive.setOnClickListener(v -> {
+            openVocabDetailWithLevel(41, 50);
+        });
+
+        binding.levelSix.setOnClickListener(v -> {
+            openVocabDetailWithLevel(51, 60);
+        });
     }
 
-    private void navigateToWordDetail(int minLevel, int maxLevel) {
-        // Create intent to launch WordDetailActivity
-        Intent intent = new Intent(getActivity(), VocabDetailActivity.class);
-
-        // Pass the level range as extras
-        intent.putExtra("MIN_LEVEL", minLevel);
-        intent.putExtra("MAX_LEVEL", maxLevel);
-
-        // Start the activity
+    private void openVocabDetailWithLevel(int startLevel, int endLevel) {
+        Intent intent = VocabDetailActivity.createIntentForLearn(
+                requireContext(),
+                startLevel,
+                endLevel
+        );
         startActivity(intent);
     }
 

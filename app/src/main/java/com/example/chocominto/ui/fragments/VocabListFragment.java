@@ -13,30 +13,22 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+//import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.example.chocominto.BuildConfig;
 import com.example.chocominto.adapters.VocabListAdapter;
-import com.example.chocominto.data.api.request.ApiConfig;
-import com.example.chocominto.data.api.request.ApiService;
-import com.example.chocominto.data.api.response.WaniKaniResponse;
 import com.example.chocominto.data.models.Vocab;
-import com.example.chocominto.databinding.FragmentSearchBinding;
+import com.example.chocominto.data.repository.VocabRepository;
 import com.example.chocominto.databinding.FragmentVocabListBinding;
 import com.example.chocominto.ui.activities.VocabDetailActivity;
-import com.example.chocominto.utils.VocabMapper;
 import com.example.chocominto.utils.AudioHelper;
 
 import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class VocabListFragment extends Fragment {
     private FragmentVocabListBinding binding;
     private static final String TAG = "VocabListFragment";
     private VocabListAdapter vocabListAdapter;
-    private ApiService apiService;
+    private VocabRepository repository;
     private boolean isLoading = false;
     private String nextUrl;
 
@@ -54,6 +46,8 @@ public class VocabListFragment extends Fragment {
         AudioHelper.getInstance().setContext(requireContext());
         Log.d(TAG, "AudioHelper initialized");
 
+        repository = VocabRepository.getInstance();
+
         vocabListAdapter = new VocabListAdapter();
         vocabListAdapter.setOnItemClickListener(this::navigateToDetailScreen);
 
@@ -61,10 +55,11 @@ public class VocabListFragment extends Fragment {
         binding.recyclerView.setLayoutManager(layoutManager);
         binding.recyclerView.setAdapter(vocabListAdapter);
 
-        setupPagination(layoutManager);
+        // Setup pull-to-refresh
+//        binding.swipeRefresh.setOnRefreshListener(() -> loadVocabularyData(true));
 
-        apiService = ApiConfig.getApiService();
-        loadVocabularyData(null);
+        setupPagination(layoutManager);
+        loadVocabularyData(false);
     }
 
     private void setupPagination(LinearLayoutManager layoutManager) {
@@ -90,7 +85,6 @@ public class VocabListFragment extends Fragment {
     private void navigateToDetailScreen(Vocab item) {
         Log.d(TAG, "Selected vocabulary: " + item.getCharacter());
 
-        // Navigate to VocabDetailActivity
         Intent intent = VocabDetailActivity.createIntent(
                 requireContext(),
                 item.getId(),
@@ -99,87 +93,65 @@ public class VocabListFragment extends Fragment {
         );
         startActivity(intent);
     }
-//    private void navigateToDetailScreen(Vocab item) {
-//        Toast.makeText(requireContext(), "Selected: " + item.getCharacter(), Toast.LENGTH_SHORT).show();
-//
-//        Log.d(TAG, "Selected vocabulary: " + item.getCharacter());
-//        if (item.getPronunciationAudios() != null) {
-//            for (Vocab.PronunciationAudio audio : item.getPronunciationAudios()) {
-//                Log.d(TAG, String.format("Audio: gender=%s, type=%s, url=%s",
-//                        audio.getGender(), audio.getContentType(), audio.getUrl()));
-//            }
-//        } else {
-//            Log.d(TAG, "No audio available for this item");
-//        }
-//    }
 
-    private void loadVocabularyData(String url) {
+    private void loadVocabularyData(boolean forceRefresh) {
         showLoading(true);
         isLoading = true;
 
-        String apiKey = "Bearer " + BuildConfig.API_KEY;
-        Log.d(TAG, "Loading vocabulary data" + (url == null ? " (initial)" : " (pagination)"));
-
-        Call<WaniKaniResponse> call;
-        if (url == null) {
-            call = apiService.getVocabularySubjects(apiKey, "vocabulary");
-        } else {
-            call = apiService.getNextPage(url, apiKey);
-        }
-
-        call.enqueue(new Callback<WaniKaniResponse>() {
+        repository.getVocabList(new VocabRepository.VocabListCallback() {
             @Override
-            public void onResponse(@NonNull Call<WaniKaniResponse> call, @NonNull Response<WaniKaniResponse> response) {
+            public void onSuccess(List<Vocab> vocabList, String nextPageUrl) {
+                if (!isAdded()) return;
+
                 showLoading(false);
                 isLoading = false;
+//                binding.swipeRefresh.setRefreshing(false);
 
-                if (response.isSuccessful() && response.body() != null) {
-                    Log.d(TAG, "API call successful, received data");
+                vocabListAdapter.setVocabularyList(vocabList);
+                nextUrl = nextPageUrl;
 
-                    if (response.body().getPages() != null) {
-                        nextUrl = response.body().getPages().getNextUrl();
-                        Log.d(TAG, "Next URL: " + nextUrl);
-                    }
-
-                    List<Vocab> vocabs = VocabMapper.mapFromResponse(response.body());
-                    Log.d(TAG, "Mapped " + vocabs.size() + " vocabulary items");
-
-                    if (url == null) {
-                        vocabListAdapter.setVocabularyList(vocabs);
-                    } else {
-                        vocabListAdapter.addVocabs(vocabs);
-                    }
-
-                    showEmptyView(vocabListAdapter.getItemCount() == 0);
-                } else {
-                    String errorMsg = "Error: " + response.code();
-                    showError(errorMsg);
-                    showEmptyView(vocabListAdapter.getItemCount() == 0);
-                    Log.e(TAG, errorMsg + " " + response.message());
-
-                    try {
-                        Log.e(TAG, "Error body: " + response.errorBody().string());
-                    } catch (Exception e) {
-                        Log.e(TAG, "Couldn't read error body", e);
-                    }
-                }
+                showEmptyView(vocabList.isEmpty());
+                Log.d(TAG, "Loaded " + vocabList.size() + " vocabulary items");
             }
 
             @Override
-            public void onFailure(@NonNull Call<WaniKaniResponse> call, @NonNull Throwable t) {
+            public void onError(String message) {
+                if (!isAdded()) return; // Fragment not attached to activity
+
                 showLoading(false);
                 isLoading = false;
-                String errorMsg = "Connection Error: " + t.getMessage();
-                showError(errorMsg);
+//                binding.swipeRefresh.setRefreshing(false);
+
+                showError(message);
                 showEmptyView(vocabListAdapter.getItemCount() == 0);
-                Log.e(TAG, errorMsg, t);
             }
-        });
+        }, forceRefresh);
     }
 
     private void loadMoreVocabulary() {
         if (nextUrl != null && !isLoading) {
-            loadVocabularyData(nextUrl);
+            isLoading = true;
+
+            repository.getNextVocabPage(nextUrl, new VocabRepository.VocabListCallback() {
+                @Override
+                public void onSuccess(List<Vocab> vocabList, String nextPageUrl) {
+                    if (!isAdded()) return; // Fragment not attached to activity
+
+                    isLoading = false;
+                    vocabListAdapter.addVocabs(vocabList);
+                    nextUrl = nextPageUrl;
+
+                    Log.d(TAG, "Loaded " + vocabList.size() + " more vocabulary items");
+                }
+
+                @Override
+                public void onError(String message) {
+                    if (!isAdded()) return;
+
+                    isLoading = false;
+                    showError(message);
+                }
+            });
         }
     }
 

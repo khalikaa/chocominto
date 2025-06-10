@@ -20,20 +20,6 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <FrameLayout
-        android:id="@+id/loadingContainer"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-        <ProgressBar
-            android:id="@+id/progressBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center" />
-    </FrameLayout>
-
     <TextView
         android:id="@+id/tvError"
         android:layout_width="wrap_content"
@@ -55,8 +41,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="16dp">
-
-
             <TextView
                 android:id="@+id/tvLevel"
                 android:layout_width="wrap_content"
@@ -67,8 +51,18 @@
                 android:textColor="@android:color/white"
                 android:textSize="12sp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvProgressCount"
                 tools:text="Level 5" />
+
+            <TextView
+                android:id="@+id/tvProgressCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:text="You've Memorized x Word"
+                app:layout_constraintBottom_toTopOf="@+id/tvLevel"
+                app:layout_constraintTop_toTopOf="parent"/>
 
             <TextView
                 android:id="@+id/tvCharacter"
@@ -78,7 +72,7 @@
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvLevel"
                 tools:text="木" />
 
             <LinearLayout
@@ -203,72 +197,39 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/layoutNormalMode"
+                android:id="@+id/layoutQuizMode"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="32dp"
-                android:orientation="vertical"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/layoutDetails"
-                app:layout_constraintVertical_bias="1.0">
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/layoutLearnMode"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
-                android:orientation="vertical"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toTopOf="@+id/btnRemoveWord"
                 app:layout_constraintTop_toBottomOf="@id/layoutDetails"
                 app:layout_constraintVertical_bias="1.0">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal">
-                    <Button
-                        android:id="@+id/btnSkip"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_marginEnd="4dp"
-                        android:text="I already know this word. Skip"
-                        android:backgroundTint="#AAAAAA" />
-
-                    <Button
-                        android:id="@+id/btnLearn"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_marginStart="4dp"
-                        android:text="I want to learn this word"/>
-                </LinearLayout>
                 <Button
-                    android:id="@+id/btnStartLearning"
-                    android:layout_width="match_parent"
+                    android:id="@+id/btnStopLearn"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="Start Learning"/>
+                    android:layout_weight="1"
+                    android:text="I've Memorized This Word" />
+
+                <Button
+                    android:id="@+id/btnKeepLearn"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="4dp"
+                    android:text="Keep Learning This Word" />
             </LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/layoutReviewMode"
+            <Button
+                android:id="@+id/btnRemoveWord"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
-                android:orientation="vertical"
-                android:visibility="visible"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/layoutDetails"
-                app:layout_constraintVertical_bias="1.0">
-                <Button
-                    android:id="@+id/btnRemoveWord"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Remove From Review List"/>
-            </LinearLayout>
+                android:text="Remove From Review List"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/layoutQuizMode" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

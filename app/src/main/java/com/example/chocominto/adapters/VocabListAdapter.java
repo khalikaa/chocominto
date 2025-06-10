@@ -7,7 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.chocominto.data.models.Vocab;
-import com.example.chocominto.databinding.ItemVocabListBinding;
+import com.example.chocominto.databinding.ItemVocabBinding;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +39,7 @@ public class VocabListAdapter extends RecyclerView.Adapter<VocabListAdapter.Voca
     @NonNull
     @Override
     public VocabListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        ItemVocabListBinding binding = ItemVocabListBinding.inflate(
+        ItemVocabBinding binding = ItemVocabBinding.inflate(
                 LayoutInflater.from(parent.getContext()), parent, false);
         return new VocabListViewHolder(binding);
     }
@@ -56,9 +56,9 @@ public class VocabListAdapter extends RecyclerView.Adapter<VocabListAdapter.Voca
     }
 
     class VocabListViewHolder extends RecyclerView.ViewHolder {
-        private final ItemVocabListBinding binding;
+        private final ItemVocabBinding binding;
 
-        public VocabListViewHolder(ItemVocabListBinding binding) {
+        public VocabListViewHolder(ItemVocabBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
 

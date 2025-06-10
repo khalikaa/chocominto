@@ -78,7 +78,6 @@ public class VocabMapper {
                         id, character, meaning, reading, partOfSpeech, level));
             } catch (Exception e) {
                 Log.e(TAG, "Error processing vocabulary item: " + e.getMessage(), e);
-                continue;
             }
         }
         Log.d(TAG, "Mapped " + result.size() + " vocabulary items");
@@ -93,15 +92,12 @@ public class VocabMapper {
                 return null;
             }
 
-            // For single item response, the ID is at the root level
             int id = response.getId();
 
-            // The rest of the data is in the data field
             Data data = response.getData();
 
             String character = data.getCharacters();
 
-            // Extract meanings
             StringBuilder meanings = new StringBuilder();
             if (data.getMeanings() != null) {
                 for (MeaningsItem meaning : data.getMeanings()) {
@@ -114,7 +110,6 @@ public class VocabMapper {
             String meaning = meanings.length() > 0 ?
                     meanings.substring(0, meanings.length() - 2) : "";
 
-            // Extract reading
             String reading = "";
             if (data.getReadings() != null && !data.getReadings().isEmpty()) {
                 for (ReadingsItem r : data.getReadings()) {
@@ -128,20 +123,16 @@ public class VocabMapper {
                 }
             }
 
-            // Extract part of speech
             String partOfSpeech = "";
             if (data.getPartsOfSpeech() != null && !data.getPartsOfSpeech().isEmpty()) {
                 partOfSpeech = data.getPartsOfSpeech().get(0);
             }
 
-            // Extract level
             int level = data.getLevel();
 
-            // Extract mnemonics
             String meaningMnemonic = data.getMeaningMnemonic();
             String readingMnemonic = data.getReadingMnemonic();
 
-            // Extract context sentences
             List<Vocab.ContextSentence> contextSentences = new ArrayList<>();
             if (data.getContextSentences() != null) {
                 for (ContextSentencesItem sentence : data.getContextSentences()) {
@@ -152,19 +143,13 @@ public class VocabMapper {
                 }
             }
 
-            // Extract pronunciation audios
-            List<Vocab.PronunciationAudio> pronunciationAudios = new ArrayList<>();
-            if (data.getPronunciationAudios() != null) {
-                for (PronunciationAudiosItem audio : data.getPronunciationAudios()) {
-                    pronunciationAudios.add(new Vocab.PronunciationAudio(
-                            audio.getUrl(),
-                            audio.getMetadata() != null ? audio.getMetadata().getGender() : "",
-                            audio.getContentType()
-                    ));
-                }
+            String audioUrl = "";
+
+            if (data.getPronunciationAudios() != null && !data.getPronunciationAudios().isEmpty()) {
+                PronunciationAudiosItem audio = data.getPronunciationAudios().get(0); // Ambil yang pertama
+                audioUrl = audio.getUrl();
             }
 
-            // Create and return the Vocab object
             return new Vocab(
                     id,
                     character,
@@ -174,8 +159,8 @@ public class VocabMapper {
                     level,
                     meaningMnemonic,
                     readingMnemonic,
-                    contextSentences,
-                    pronunciationAudios
+                    audioUrl,
+                    contextSentences
             );
 
         } catch (Exception e) {

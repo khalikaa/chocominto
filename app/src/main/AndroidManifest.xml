@@ -16,6 +16,9 @@
         android:theme="@style/Theme.Chocominto"
         tools:targetApi="31">
         <activity
+            android:name=".ui.activities.QuizActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.activities.VocabDetailActivity"
             android:exported="false" />
         <activity
