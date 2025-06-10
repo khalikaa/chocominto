@@ -5,6 +5,7 @@
         <item name="android:windowBackground">#f3ffee</item>
         <item name="android:textColorPrimary">#34180a</item>
         <item name="android:colorBackground">#FFFFFF</item>
+        <item name="android:colorAccent">#000000</item>
         <item name="colorPrimary">#4fa475</item>
         <item name="android:textColor">#34180a</item>
     </style>

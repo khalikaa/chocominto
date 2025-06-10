@@ -43,7 +43,6 @@ public class VocabHelper {
         }
     }
 
-    // Query all vocabulary
     public Cursor queryAllVocab() {
         return database.query(
                 VOCAB_TABLE,
@@ -108,8 +107,6 @@ public class VocabHelper {
                 DatabaseContract.VocabColumns.COLUMN_LEARNED_AT + " DESC" // Most recently learned first
         );
     }
-
-
 
     public long insertVocab(ContentValues values) {
         return database.insert(VOCAB_TABLE, null, values);

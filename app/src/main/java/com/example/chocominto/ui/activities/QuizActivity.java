@@ -167,7 +167,7 @@ public class QuizActivity extends AppCompatActivity {
     }
 
     private void loadVocabFromDatabase() {
-//        showLoading(true);
+        showLoading(true);
 
         new Thread(() -> {
             try {
@@ -175,7 +175,7 @@ public class QuizActivity extends AppCompatActivity {
 
                 if (selectedWordIds.isEmpty()) {
                     runOnUiThread(() -> {
-//                        showLoading(false);
+                        showLoading(false);
                         showError("No words selected for quiz!");
                     });
                     return;
@@ -209,7 +209,7 @@ public class QuizActivity extends AppCompatActivity {
                 vocabHelper.close();
 
                 runOnUiThread(() -> {
-//                    showLoading(false);
+                    showLoading(false);
 
                     if (vocabList.isEmpty()) {
                         showError("No vocabulary data found in database!");
@@ -220,7 +220,7 @@ public class QuizActivity extends AppCompatActivity {
 
             } catch (Exception e) {
                 runOnUiThread(() -> {
-//                    showLoading(false);
+                    showLoading(false);
                     showError("Error: " + e.getMessage());
                 });
             }
@@ -330,15 +330,15 @@ public class QuizActivity extends AppCompatActivity {
         AudioHelper.getInstance().playAudio(audioUrl);
     }
 
-//    private void showLoading(boolean isLoading) {
-//        binding.contentContainer.setVisibility(isLoading ? View.GONE : View.VISIBLE);
-//        binding.tvError.setVisibility(View.GONE);
-//
-//        if (isLoading) {
-//            binding.tvError.setText("Loading...");
-//            binding.tvError.setVisibility(View.VISIBLE);
-//        }
-//    }
+    private void showLoading(boolean isLoading) {
+        binding.contentContainer.setVisibility(isLoading ? View.GONE : View.VISIBLE);
+        binding.tvError.setVisibility(View.GONE);
+
+        if (isLoading) {
+            binding.tvError.setText("Loading...");
+            binding.tvError.setVisibility(View.VISIBLE);
+        }
+    }
 
     private String stripTags(String text) {
         if (text == null) return "";

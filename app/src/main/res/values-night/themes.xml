@@ -6,6 +6,7 @@
         <item name="android:textColorPrimary">#f3ffee</item>
         <item name="android:textColor">#FFFFFF</item>
         <item name="colorPrimary">#4fa475</item>
+        <item name="android:colorAccent">#FFFFFF</item>
         <item name="android:colorBackground">#341c0d</item>
     </style>
 </resources>

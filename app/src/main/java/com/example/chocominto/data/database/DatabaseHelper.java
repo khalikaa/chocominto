@@ -34,7 +34,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     DatabaseContract.VocabColumns.COLUMN_AUDIO_URL,
                     DatabaseContract.VocabColumns.COLUMN_LEARNED_AT);
 
-    // SQL statement to create context sentences table
     private final String SQL_CREATE_CONTEXT_SENTENCES_TABLE =
             String.format("CREATE TABLE %s " +
                             "(%s INTEGER PRIMARY KEY AUTOINCREMENT," +
@@ -57,20 +56,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        // Create both tables
         db.execSQL(SQL_CREATE_VOCAB_TABLE);
         db.execSQL(SQL_CREATE_CONTEXT_SENTENCES_TABLE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // Simple upgrade strategy - drop and recreate
         db.execSQL("DROP TABLE IF EXISTS " + DatabaseContract.ContextSentenceColumns.TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + DatabaseContract.VocabColumns.TABLE_NAME);
         onCreate(db);
     }
 
-    // Enable foreign key constraints
     @Override
     public void onConfigure(SQLiteDatabase db) {
         super.onConfigure(db);

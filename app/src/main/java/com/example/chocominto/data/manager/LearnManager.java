@@ -35,12 +35,6 @@ public class LearnManager {
         Log.d(TAG, "Added word " + vocabId + " to learn list. Total: " + selectedWords.size());
     }
 
-    public void removeWordFromLearn(int vocabId) {
-        Set<String> selectedWords = getSelectedWordIds();
-        selectedWords.remove(String.valueOf(vocabId));
-        prefs.edit().putStringSet(KEY_SELECTED_WORDS, selectedWords).apply();
-    }
-
     public boolean isWordSelected(int vocabId) {
         return getSelectedWordIds().contains(String.valueOf(vocabId));
     }
@@ -57,26 +51,7 @@ public class LearnManager {
         prefs.edit().remove(KEY_SELECTED_WORDS).apply();
     }
 
-    public void markWordMemorized(int vocabId) {
-        Set<String> memorizedWords = getMemorizedWordIds();
-        memorizedWords.add(String.valueOf(vocabId));
-        prefs.edit().putStringSet(KEY_MEMORIZED_WORDS, memorizedWords).apply();
-        removeWordFromLearn(vocabId);
-    }
-
-    public boolean isWordMemorized(int vocabId) {
-        return getMemorizedWordIds().contains(String.valueOf(vocabId));
-    }
-
     public Set<String> getMemorizedWordIds() {
         return new HashSet<>(prefs.getStringSet(KEY_MEMORIZED_WORDS, new HashSet<>()));
-    }
-
-    public int getMemorizedWordsCount() {
-        return getMemorizedWordIds().size();
-    }
-
-    public void clearMemorizedWords() {
-        prefs.edit().remove(KEY_MEMORIZED_WORDS).apply();
     }
 }

@@ -67,6 +67,7 @@ public class VocabListFragment extends Fragment {
 
     private void setupSearchView() {
         binding.searchView.setIconifiedByDefault(false);
+        binding.searchView.setQueryHint("Search vocabulary...");
 
         binding.searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -213,10 +214,8 @@ public class VocabListFragment extends Fragment {
 
                     isLoading = false;
 
-                    // Tambahkan ke allVocabList untuk filtering
                     allVocabList.addAll(vocabList);
 
-                    // Jika dalam mode pencarian, filter hasil baru
                     if (currentQuery != null && !currentQuery.isEmpty()) {
                         filterVocabs();
                     } else {

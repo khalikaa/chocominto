@@ -363,6 +363,7 @@ public class VocabDetailActivity extends AppCompatActivity {
         if (startLevel > 0 && endLevel > 0) {
             binding.getRoot().postDelayed(() -> {
                 loadRandomVocabFromRange(startLevel, endLevel);
+                binding.contentContainer.scrollTo(0, 0);
             }, 1500);
         }
     }
@@ -371,6 +372,7 @@ public class VocabDetailActivity extends AppCompatActivity {
         if (vocab == null) return;
         if (startLevel > 0 && endLevel > 0) {
             loadRandomVocabFromRange(startLevel, endLevel);
+            binding.contentContainer.scrollTo(0, 0);
         } else {
             finish();
         }

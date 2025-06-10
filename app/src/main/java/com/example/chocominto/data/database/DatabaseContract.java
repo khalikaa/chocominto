@@ -20,7 +20,6 @@ public class DatabaseContract {
         public static final String COLUMN_LEARNED_AT = "learned_at";
     }
 
-    // Context Sentences table (one-to-many relationship with vocab)
     public static final class ContextSentenceColumns implements BaseColumns {
         public static final String TABLE_NAME = "context_sentences";
         public static final String COLUMN_ID = "sentence_id";
