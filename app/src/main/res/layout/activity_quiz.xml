@@ -14,7 +14,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
+            android:background="@color/choco"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
@@ -48,8 +48,9 @@
                 android:background="@drawable/bg_level"
                 android:paddingHorizontal="8dp"
                 android:paddingVertical="4dp"
-                android:textColor="@android:color/white"
+                android:textColor="@color/choco"
                 android:textSize="12sp"
+                android:layout_marginTop="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tvProgressCount"
                 tools:text="Level 5" />
@@ -61,6 +62,8 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:text="You've Memorized x Word"
+                android:textSize="22sp"
+                android:textStyle="bold"
                 app:layout_constraintBottom_toTopOf="@+id/tvLevel"
                 app:layout_constraintTop_toTopOf="parent"/>
 
@@ -90,16 +93,17 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="24sp"
-                    tools:text="き" />
+                    tools:text="き"
+                    android:textStyle="bold"/>
 
-                <ImageButton
+                <ImageView
                     android:id="@+id/btnPlayAudio"
                     android:layout_width="36dp"
                     android:layout_height="36dp"
-                    android:layout_marginStart="16dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:layout_marginStart="8dp"
                     android:contentDescription="Play pronunciation"
-                    android:src="@android:drawable/ic_media_play" />
+                    app:srcCompat="@drawable/ic_vol"
+                    app:tint="?android:textColor"/>
             </LinearLayout>
 
             <Button
@@ -109,6 +113,7 @@
                 android:layout_marginTop="24dp"
                 android:text="Show Word Details"
                 android:visibility="gone"
+                android:textColor="@color/white"
                 app:layout_constraintTop_toBottomOf="@id/layoutPronunciation" />
 
             <LinearLayout
@@ -211,15 +216,17 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="I've Memorized This Word" />
+                    android:textColor="@color/white"
+                    android:text="I've Memorized\nThis Word" />
 
                 <Button
                     android:id="@+id/btnKeepLearn"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:textColor="@color/white"
                     android:layout_marginStart="4dp"
-                    android:text="Keep Learning This Word" />
+                    android:text="Keep Learning\nThis Word" />
             </LinearLayout>
 
             <Button
@@ -227,6 +234,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Remove From Review List"
+                android:textColor="@color/white"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/layoutQuizMode" />

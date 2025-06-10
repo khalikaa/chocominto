@@ -59,7 +59,7 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ViewHolder
             binding.tvMeaning.setText(vocab.getMeaning());
             binding.tvReading.setText(vocab.getReading());
             binding.tvPartOfSpeech.setText(vocab.getPartOfSpeech());
-            binding.tvLevel.setText(String.valueOf(vocab.getLevel()));
+            binding.tvLevel.setText(String.format("Level %d", vocab.getLevel()));
 
             itemView.setOnClickListener(v -> {
                 if (onItemClickCallback != null) {

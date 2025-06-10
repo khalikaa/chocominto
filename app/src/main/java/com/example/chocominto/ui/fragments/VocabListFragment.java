@@ -6,14 +6,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AutoCompleteTextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-//import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.chocominto.adapters.VocabListAdapter;
 import com.example.chocominto.data.models.Vocab;
@@ -22,6 +23,7 @@ import com.example.chocominto.databinding.FragmentVocabListBinding;
 import com.example.chocominto.ui.activities.VocabDetailActivity;
 import com.example.chocominto.utils.AudioHelper;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class VocabListFragment extends Fragment {
@@ -31,6 +33,8 @@ public class VocabListFragment extends Fragment {
     private VocabRepository repository;
     private boolean isLoading = false;
     private String nextUrl;
+    private String currentQuery = "";
+    private List<Vocab> allVocabList = new ArrayList<>();
 
     @Nullable
     @Override
@@ -55,11 +59,74 @@ public class VocabListFragment extends Fragment {
         binding.recyclerView.setLayoutManager(layoutManager);
         binding.recyclerView.setAdapter(vocabListAdapter);
 
-        // Setup pull-to-refresh
-//        binding.swipeRefresh.setOnRefreshListener(() -> loadVocabularyData(true));
-
         setupPagination(layoutManager);
+        setupSearchView();
         loadVocabularyData(false);
+    }
+
+
+    private void setupSearchView() {
+        binding.searchView.setIconifiedByDefault(false);
+
+        binding.searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                currentQuery = query;
+                filterVocabs();
+                return true;
+            }
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                currentQuery = newText;
+                filterVocabs();
+                return true;
+            }
+        });
+
+        binding.searchView.setOnCloseListener(() -> {
+            currentQuery = "";
+            filterVocabs();
+            return false;
+        });
+
+        binding.searchView.setOnClickListener(v -> {
+            binding.searchView.onActionViewExpanded();
+            binding.searchView.requestFocus();
+        });
+    }
+
+    private void filterVocabs() {
+        if (allVocabList.isEmpty()) {
+            return;
+        }
+
+        List<Vocab> filteredList = new ArrayList<>();
+
+        if (currentQuery == null || currentQuery.isEmpty()) {
+            filteredList.addAll(allVocabList);
+        } else {
+            String lowerQuery = currentQuery.toLowerCase();
+            for (Vocab vocab : allVocabList) {
+                if (vocab.getCharacter().toLowerCase().contains(lowerQuery) ||
+                        vocab.getMeaning().toLowerCase().contains(lowerQuery) ||
+                        vocab.getPartOfSpeech().toLowerCase().contains(lowerQuery) ||
+                        vocab.getReading().toLowerCase().contains(lowerQuery)) {
+
+                    filteredList.add(vocab);
+                }
+            }
+        }
+
+        vocabListAdapter.setVocabularyList(filteredList);
+
+        boolean isEmpty = filteredList.isEmpty();
+        showEmptyView(isEmpty);
+
+        if (isEmpty && currentQuery != null && !currentQuery.isEmpty()) {
+            binding.tvEmpty.setText("No results found for \"" + currentQuery + "\"");
+        } else if (isEmpty) {
+            binding.tvEmpty.setText("No vocabulary found");
+        }
     }
 
     private void setupPagination(LinearLayoutManager layoutManager) {
@@ -68,14 +135,16 @@ public class VocabListFragment extends Fragment {
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
 
-                int visibleItemCount = layoutManager.getChildCount();
-                int totalItemCount = layoutManager.getItemCount();
-                int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
+                if (currentQuery == null || currentQuery.isEmpty()) {
+                    int visibleItemCount = layoutManager.getChildCount();
+                    int totalItemCount = layoutManager.getItemCount();
+                    int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
 
-                if (!isLoading && nextUrl != null) {
-                    if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount
-                            && firstVisibleItemPosition >= 0) {
-                        loadMoreVocabulary();
+                    if (!isLoading && nextUrl != null) {
+                        if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount
+                                && firstVisibleItemPosition >= 0) {
+                            loadMoreVocabulary();
+                        }
                     }
                 }
             }
@@ -105,12 +174,18 @@ public class VocabListFragment extends Fragment {
 
                 showLoading(false);
                 isLoading = false;
-//                binding.swipeRefresh.setRefreshing(false);
 
-                vocabListAdapter.setVocabularyList(vocabList);
+                allVocabList.clear();
+                allVocabList.addAll(vocabList);
+
+                if (currentQuery != null && !currentQuery.isEmpty()) {
+                    filterVocabs();
+                } else {
+                    vocabListAdapter.setVocabularyList(vocabList);
+                    showEmptyView(vocabList.isEmpty());
+                }
+
                 nextUrl = nextPageUrl;
-
-                showEmptyView(vocabList.isEmpty());
                 Log.d(TAG, "Loaded " + vocabList.size() + " vocabulary items");
             }
 
@@ -120,7 +195,6 @@ public class VocabListFragment extends Fragment {
 
                 showLoading(false);
                 isLoading = false;
-//                binding.swipeRefresh.setRefreshing(false);
 
                 showError(message);
                 showEmptyView(vocabListAdapter.getItemCount() == 0);
@@ -138,9 +212,18 @@ public class VocabListFragment extends Fragment {
                     if (!isAdded()) return; // Fragment not attached to activity
 
                     isLoading = false;
-                    vocabListAdapter.addVocabs(vocabList);
-                    nextUrl = nextPageUrl;
 
+                    // Tambahkan ke allVocabList untuk filtering
+                    allVocabList.addAll(vocabList);
+
+                    // Jika dalam mode pencarian, filter hasil baru
+                    if (currentQuery != null && !currentQuery.isEmpty()) {
+                        filterVocabs();
+                    } else {
+                        vocabListAdapter.addVocabs(vocabList);
+                    }
+
+                    nextUrl = nextPageUrl;
                     Log.d(TAG, "Loaded " + vocabList.size() + " more vocabulary items");
                 }
 
@@ -158,6 +241,7 @@ public class VocabListFragment extends Fragment {
     private void showLoading(boolean isLoading) {
         if (binding != null) {
             binding.progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+            binding.searchView.setVisibility(isLoading ? View.GONE : View.VISIBLE);
         }
     }
 

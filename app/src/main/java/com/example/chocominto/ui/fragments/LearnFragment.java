@@ -2,6 +2,8 @@ package com.example.chocominto.ui.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,13 +12,18 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.example.chocominto.data.database.VocabHelper;
 import com.example.chocominto.data.manager.LearnManager;
 import com.example.chocominto.databinding.FragmentLearnBinding;
 import com.example.chocominto.ui.activities.VocabDetailActivity;
 
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+
 public class LearnFragment extends Fragment {
     private FragmentLearnBinding binding;
     private LearnManager learnManager;
+    private VocabHelper vocabHelper;
 
     @Nullable
     @Override
@@ -43,28 +50,31 @@ public class LearnFragment extends Fragment {
     }
 
     private void setupProgressData() {
-        int goal = 10; // Default goal
-        int selectedCount = learnManager.getSelectedWordsCount();
-
-        binding.progressBar.setMax(goal);
-        binding.progressBar.setProgress(selectedCount);
-
-        binding.textProgressCounter.setText(selectedCount + "/" + goal);
-
-        binding.textWordsLearned.setText(selectedCount + " words selected for learning");
-
-        // Streak
-        int streak = 3; // Mock streak
-        binding.textCurrentStreak.setText(streak + "-day streak! 🔥");
+        Executor executor = Executors.newSingleThreadExecutor();
+        Handler handler = new Handler(Looper.getMainLooper());
+        executor.execute(() -> {
+            handler.post(() -> {
+                vocabHelper = VocabHelper.getInstance(requireContext());
+                vocabHelper.open();
+                int selectedCount = vocabHelper.getTodayVocabCount();
+                binding.textWordsLearned.setText("You've learned " + selectedCount + " Words Today!");
+                vocabHelper.close();
+            });
+        });
     }
 
     private void updateProgressBar() {
-        int goal = 10; // Default goal
-        int selectedCount = learnManager.getSelectedWordsCount();
-
-        binding.progressBar.setProgress(selectedCount);
-        binding.textProgressCounter.setText(selectedCount + "/" + goal);
-        binding.textWordsLearned.setText(selectedCount + " words selected for learning");
+        Executor executor = Executors.newSingleThreadExecutor();
+        Handler handler = new Handler(Looper.getMainLooper());
+        executor.execute(() -> {
+            handler.post(() -> {
+                vocabHelper = VocabHelper.getInstance(requireContext());
+                vocabHelper.open();
+                int selectedCount = vocabHelper.getTodayVocabCount();
+                binding.textWordsLearned.setText("You've learned " + selectedCount + " Words Today!");
+                vocabHelper.close();
+            });
+        });
     }
 
     private void setupLevelClickListeners() {

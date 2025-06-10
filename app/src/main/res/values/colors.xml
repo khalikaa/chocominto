@@ -2,8 +2,13 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="light_blue">#D0E4FF</color>
-    <color name="light_green">#D0FFD6</color>
-    <color name="light_orange">#FFE4C4</color>
-    <color name="purple">#9C27B0</color>
+
+    <color name="very_light_green">#f3ffee</color>
+    <color name="light_green">#d1f2e1</color>
+    <color name="green">#b5ead4</color>
+    <color name="green2">#86dbac</color>
+    <color name="dark_green">#4fa475</color>
+    <color name="choco">#582e19</color>
+    <color name="dark_choco">#34180a</color>
+
 </resources>

@@ -18,7 +18,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:textColor="#757575"
         android:textSize="14sp"
         tools:text="Let's plant a tree." />
 

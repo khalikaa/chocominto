@@ -4,14 +4,18 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.example.chocominto.R;
 import com.example.chocominto.data.database.ContextSentenceHelper;
@@ -86,6 +90,12 @@ public class VocabDetailActivity extends AppCompatActivity {
             getSupportActionBar().setTitle(getTitleForMode());
         }
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(ContextCompat.getColor(this, R.color.choco));
+        }
+
         vocabId = getIntent().getIntExtra(EXTRA_VOCAB_ID, -1);
         mode = getIntent().getIntExtra(EXTRA_MODE, MODE_NORMAL);
         source = getIntent().getStringExtra(EXTRA_SOURCE);
@@ -124,6 +134,7 @@ public class VocabDetailActivity extends AppCompatActivity {
                     vocabId = vocab.getId();
                     displayVocabData();
                     setupActionButtons();
+                    binding.getRoot().scrollTo(0, 0);
                 } else {
                     showError("Failed to parse vocabulary data");
                 }
@@ -169,7 +180,6 @@ public class VocabDetailActivity extends AppCompatActivity {
                                 showLoading(false);
                                 if (success) {
                                     Toast.makeText(this, "Vocabulary deleted successfully", Toast.LENGTH_SHORT).show();
-
                                     finish();
                                 } else {
                                     Toast.makeText(this, "Failed to delete vocabulary", Toast.LENGTH_SHORT).show();
@@ -261,23 +271,16 @@ public class VocabDetailActivity extends AppCompatActivity {
         binding.tvReading.setText(vocab.getReading());
         binding.tvMeaning.setText(vocab.getMeaning());
         binding.tvPartOfSpeech.setText(vocab.getPartOfSpeech());
-        binding.tvMeaningMnemonic.setText(vocab.getMeaningMnemonic());
-        binding.tvReadingMnemonic.setText(vocab.getReadingMnemonic());
+        binding.tvMeaningMnemonic.setText(stripTags(vocab.getMeaningMnemonic()));
+        binding.tvReadingMnemonic.setText(stripTags(vocab.getReadingMnemonic()));
 
         displayExampleSentences();
     }
 
-//    private void toggleWordDetails() {
-//        detailsVisible = !detailsVisible;
-//
-//        binding.layoutDetails.setVisibility(detailsVisible ? View.VISIBLE : View.GONE);
-//        binding.btnToggleWordDetails.setText(detailsVisible ? "Hide Word Details" : "Show Word Details");
-//
-//        if (detailsVisible) {
-//            Animation fadeIn = AnimationUtils.loadAnimation(this, android.R.anim.fade_in);
-//            binding.layoutDetails.startAnimation(fadeIn);
-//        }
-//    }
+    private String stripTags(String text) {
+        if (text == null) return "";
+        return text.replaceAll("<[^>]*>", "");
+    }
 
     private void displayExampleSentences() {
         binding.layoutExamples.removeAllViews();
@@ -357,8 +360,6 @@ public class VocabDetailActivity extends AppCompatActivity {
         binding.btnStartLearning.setText(String.format("Start Learning (%d words selected)", selectedCount));
         binding.btnStartLearning.setEnabled(selectedCount >= 5);
 
-        Toast.makeText(this, "Added " + vocab.getCharacter() + " to your learning list!", Toast.LENGTH_SHORT).show();
-
         if (startLevel > 0 && endLevel > 0) {
             binding.getRoot().postDelayed(() -> {
                 loadRandomVocabFromRange(startLevel, endLevel);
@@ -368,9 +369,6 @@ public class VocabDetailActivity extends AppCompatActivity {
 
     private void skipLearning() {
         if (vocab == null) return;
-
-        Toast.makeText(this, "Skipped " + vocab.getCharacter(), Toast.LENGTH_SHORT).show();
-
         if (startLevel > 0 && endLevel > 0) {
             loadRandomVocabFromRange(startLevel, endLevel);
         } else {
@@ -426,7 +424,6 @@ public class VocabDetailActivity extends AppCompatActivity {
     private void startQuiz() {
         Set<String> selectedWordIds = learnManager.getSelectedWordIds();
         if (selectedWordIds.isEmpty()) {
-            Toast.makeText(this, "No words selected for quiz!", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -465,7 +462,6 @@ public class VocabDetailActivity extends AppCompatActivity {
         if (vocabs.isEmpty()) {
             runOnUiThread(() -> {
                 showLoading(false);
-                Toast.makeText(this, "No vocab data loaded!", Toast.LENGTH_SHORT).show();
             });
             return;
         }
@@ -531,10 +527,8 @@ public class VocabDetailActivity extends AppCompatActivity {
 
     private void playAudio() {
         if (vocab == null || vocab.getAudioUrl() == null) {
-            Toast.makeText(this, "No audio available", Toast.LENGTH_SHORT).show();
             return;
         }
-
         String audioUrl = vocab.getAudioUrl();
         AudioHelper.getInstance().playAudio(audioUrl);
     }

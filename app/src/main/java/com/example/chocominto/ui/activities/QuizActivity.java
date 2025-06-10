@@ -3,15 +3,20 @@ package com.example.chocominto.ui.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+
 import com.example.chocominto.R;
 import com.example.chocominto.data.database.ContextSentenceHelper;
 import com.example.chocominto.utils.MappingHelper;
@@ -27,8 +32,6 @@ import java.util.List;
 import java.util.Set;
 
 public class QuizActivity extends AppCompatActivity {
-    private static final String TAG = "QuizActivity";
-
     private int totalWordsInSession = 0;
     private int completedWordsInSession = 0;
 
@@ -61,6 +64,12 @@ public class QuizActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(ContextCompat.getColor(this, R.color.choco));
+        }
+
         learnManager = LearnManager.getInstance(this);
         vocabHelper = VocabHelper.getInstance(this);
         contextSentenceHelper = ContextSentenceHelper.getInstance(this);
@@ -74,8 +83,8 @@ public class QuizActivity extends AppCompatActivity {
         binding.btnPlayAudio.setOnClickListener(v -> playAudio());
 
         if (isReviewMode) {
-            binding.btnStopLearn.setText("I Remember This");
-            binding.btnKeepLearn.setText("Need to Review Again");
+            binding.btnStopLearn.setText("I Remember\nThis Word");
+            binding.btnKeepLearn.setText("Keep Reviewing\nThis Word");
             binding.btnRemoveWord.setVisibility(View.VISIBLE);
         }
 
@@ -83,7 +92,6 @@ public class QuizActivity extends AppCompatActivity {
             if (currentVocab != null) {
                 quizQueue.remove(currentVocab.getId());
                 completedWordsInSession++;
-                Toast.makeText(this, "Great! Moving to next word.", Toast.LENGTH_SHORT).show();
                 nextQuizWord();
             }
         });
@@ -92,7 +100,6 @@ public class QuizActivity extends AppCompatActivity {
             if (currentVocab != null) {
                 quizQueue.pollFirst();
                 quizQueue.addLast(currentVocab.getId());
-                Toast.makeText(this, "Keep practicing this word!", Toast.LENGTH_SHORT).show();
                 nextQuizWord();
             }
         });
@@ -147,7 +154,6 @@ public class QuizActivity extends AppCompatActivity {
                             });
 
                         } catch (Exception e) {
-                            Log.e(TAG, "Error deleting vocab from database", e);
                             runOnUiThread(() -> {
                                 Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                                 binding.contentContainer.setVisibility(View.VISIBLE);
@@ -213,7 +219,6 @@ public class QuizActivity extends AppCompatActivity {
                 });
 
             } catch (Exception e) {
-                Log.e(TAG, "Error loading vocab from database", e);
                 runOnUiThread(() -> {
 //                    showLoading(false);
                     showError("Error: " + e.getMessage());
@@ -255,6 +260,7 @@ public class QuizActivity extends AppCompatActivity {
         binding.layoutDetails.setVisibility(View.GONE);
         binding.layoutPronunciation.setVisibility(View.GONE);
         binding.btnToggleWordDetails.setVisibility(View.VISIBLE);
+        binding.getRoot().scrollTo(0, 0);
 
         int vocabId = quizQueue.peekFirst();
 
@@ -285,8 +291,8 @@ public class QuizActivity extends AppCompatActivity {
         binding.tvMeaning.setText(currentVocab.getMeaning());
         binding.tvLevel.setText(getString(R.string.level_format, currentVocab.getLevel()));
         binding.tvPartOfSpeech.setText(currentVocab.getPartOfSpeech());
-        binding.tvMeaningMnemonic.setText(currentVocab.getMeaningMnemonic());
-        binding.tvReadingMnemonic.setText(currentVocab.getReadingMnemonic());
+        binding.tvMeaningMnemonic.setText(stripTags(currentVocab.getMeaningMnemonic()));
+        binding.tvReadingMnemonic.setText(stripTags(currentVocab.getReadingMnemonic()));
 
         displayExampleSentences();
     }
@@ -334,6 +340,11 @@ public class QuizActivity extends AppCompatActivity {
 //        }
 //    }
 
+    private String stripTags(String text) {
+        if (text == null) return "";
+        return text.replaceAll("<[^>]*>", "");
+    }
+
     private void showError(String message) {
         binding.contentContainer.setVisibility(View.GONE);
         binding.tvError.setVisibility(View.VISIBLE);
@@ -344,7 +355,7 @@ public class QuizActivity extends AppCompatActivity {
     private void showQuizDone() {
         binding.contentContainer.setVisibility(View.GONE);
         binding.tvError.setVisibility(View.VISIBLE);
-        binding.tvError.setText("Congratulations! You have finished all your words.");
+        binding.tvError.setText("Congratulations!\nYou have memorized all your words.");
         Toast.makeText(this, "Quiz Complete!", Toast.LENGTH_LONG).show();
 
         learnManager.clearSelectedWords();

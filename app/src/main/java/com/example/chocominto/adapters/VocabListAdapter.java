@@ -75,7 +75,7 @@ public class VocabListAdapter extends RecyclerView.Adapter<VocabListAdapter.Voca
             binding.tvReading.setText(item.getReading());
             binding.tvMeaning.setText(item.getMeaning());
             binding.tvPartOfSpeech.setText(item.getPartOfSpeech());
-            binding.tvLevel.setText(String.format("Lvl %d", item.getLevel()));
+            binding.tvLevel.setText(String.format("Level %d", item.getLevel()));
         }
     }
 }

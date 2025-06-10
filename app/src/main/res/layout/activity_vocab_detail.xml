@@ -14,7 +14,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
+            android:background="@color/choco"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
@@ -39,9 +39,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:fontFamily="@font/poppins_semibold"
         android:text="Error loading data"
         android:textSize="16sp"
         android:visibility="gone"
+        android:layout_marginTop="8dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
     <androidx.core.widget.NestedScrollView
@@ -64,7 +66,7 @@
                 android:background="@drawable/bg_level"
                 android:paddingHorizontal="8dp"
                 android:paddingVertical="4dp"
-                android:textColor="@android:color/white"
+                android:textColor="@color/dark_choco"
                 android:textSize="12sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -78,7 +80,7 @@
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvLevel"
                 tools:text="木" />
 
             <LinearLayout
@@ -98,14 +100,14 @@
                     android:textSize="24sp"
                     tools:text="き" />
 
-                <ImageButton
+                <ImageView
                     android:id="@+id/btnPlayAudio"
                     android:layout_width="36dp"
                     android:layout_height="36dp"
-                    android:layout_marginStart="16dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:layout_marginStart="8dp"
                     android:contentDescription="Play pronunciation"
-                    android:src="@android:drawable/ic_media_play" />
+                    app:srcCompat="@drawable/ic_vol"
+                    app:tint="?android:textColor"/>
             </LinearLayout>
 
             <Button
@@ -115,6 +117,7 @@
                 android:layout_marginTop="24dp"
                 android:text="Show Word Details"
                 android:visibility="gone"
+                android:textColor="@color/white"
                 app:layout_constraintTop_toBottomOf="@id/layoutPronunciation" />
 
             <LinearLayout
@@ -235,19 +238,21 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:layout_marginEnd="4dp"
-                        android:text="I already know this word. Skip"
-                        android:backgroundTint="#AAAAAA" />
+                        android:textColor="@color/white"
+                        android:text="I already know\nthis word"/>
 
                     <Button
                         android:id="@+id/btnLearn"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:textColor="@color/white"
                         android:layout_marginStart="4dp"
-                        android:text="I want to learn this word"/>
+                        android:text="I want to learn\nthis word"/>
                 </LinearLayout>
                 <Button
                     android:id="@+id/btnStartLearning"
+                    android:textColor="@color/white"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Start Learning"/>
@@ -265,6 +270,7 @@
                 app:layout_constraintVertical_bias="1.0">
                 <Button
                     android:id="@+id/btnRemoveWord"
+                    android:textColor="@color/white"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Remove From Review List"/>
